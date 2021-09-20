@@ -23,7 +23,10 @@ conn = boto.connect_s3(
         )
 coin_bucket = conn.get_bucket("coin-bucket")
 
-def load_to_s3_from_nas(dt, hh):
+def load_to_s3_from_nas(ts):
+    ts = datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S+00:00')
+    dt = ts.strftime("%Y-%m-%d")
+    hh = ts.strftime("%H")
     read_dir = f"/raw/ticker/dt={dt}/hh={hh}"
     write_dir = f"/raw/ticker_merged/dt={dt}"
 
@@ -83,8 +86,7 @@ end = DummyOperator(task_id="end")
 load_to_s3_from_nas = PythonOperator(
     task_id='load_to_s3_from_nas',
     python_callable=load_to_s3_from_nas,
-    op_kwargs={'dt': '{{ ds }}',
-               'hh': datetime.strptime('{{ ts }}', '%Y-%m-%dT%H:%M:%S+00:00').strftime('%H')},
+    op_kwargs={'ts': '{{ ts }}'},
     dag=dag
 )
 
