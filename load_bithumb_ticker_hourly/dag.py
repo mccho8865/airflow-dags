@@ -68,12 +68,12 @@ default_args = {
 }
 
 dag = DAG(
-    'load_bithumb_ticker_hourly',
+    'load_ticker_from_nas_hourly',
     default_args=default_args,
-    description='A simple tutorial DAG',
+    description='load_ticker_from_nas_hourly',
     schedule_interval='5 * * * *',
     start_date=datetime(2021, 9, 15),
-    tags=['load', 'bithumb'],
+    tags=['load', 'bithumb', 'ticker', 'nas_to_s3'],
 )
 
 start = DummyOperator(task_id="start")
@@ -83,8 +83,8 @@ end = DummyOperator(task_id="end")
 load_to_s3_from_nas = PythonOperator(
     task_id='load_to_s3_from_nas',
     python_callable=load_to_s3_from_nas,
-    op_kwargs={'dt': '{{ ds.strftime("%Y-%m-%d") }}',
-               'hh': '{{ ts.strftime("%H")}}'},
+    op_kwargs={'dt': '{{ ds }}',
+               'hh': '{{ ts.hour() }}'},
     dag=dag
 )
 
