@@ -84,17 +84,8 @@ load_to_s3_from_nas = PythonOperator(
     task_id='load_to_s3_from_nas',
     python_callable=load_to_s3_from_nas,
     op_kwargs={'dt': '{{ ds }}',
-               'hh': '{{ ts.hour() }}'},
+               'hh': datetime.strptime('{{ ts }}', '%Y-%m-%dT%H:%M:%S+00:00').strftime('%H')},
     dag=dag
 )
-
-# load unique ticker item to warehouse
-# load_to_batchlayer_ticker = PythonOperator(
-#     task_id='load_to_batchlayer_ticker',
-#     python_callable=load_to_batchlayer_ticker.execute,
-#     op_kwargs={'dt': '{{ ds.strftime("%Y-%m-%d") }}',
-#                'hh': '{{ ts.strftime("%H")}}'},
-#     dag=dag
-# )
 
 start >> load_to_s3_from_nas >> end
