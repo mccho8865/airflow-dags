@@ -34,7 +34,6 @@ def execute(dt, hh):
             item_list.append("".join(item).replace(" ", ""))
         print(f"item count : {len(item_list)}")
 
-
     k = Key(coin_bucket)
     k.key = f"warehouse/raw/ticker/dt={dt}/hh_{hh}.txt"
     k.set_contents_from_string("\n".join(item_list))
