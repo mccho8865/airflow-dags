@@ -8,7 +8,7 @@ from datetime import timedelta, datetime
 
 from airflow import DAG
 from airflow.utils import timezone
-from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
+from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
 from airflow.contrib.operators.spark_submit_operator import SparkSubmitOperator
 
@@ -90,10 +90,9 @@ start = DummyOperator(task_id="start")
 end = DummyOperator(task_id="end")
 
 # merge files about hourly ticker and upload to s3 from nas
-load_to_s3_from_nas = PythonVirtualenvOperator(
+load_to_s3_from_nas = PythonOperator(
     task_id='load_to_s3_from_nas',
     python_callable=load_to_s3_from_nas,
-    requirements=["boto"],
     op_kwargs={'ts': '{{ ts }}'},
     dag=dag
 )
