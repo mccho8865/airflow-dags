@@ -29,7 +29,9 @@ def load_to_s3_from_nas(ts):
     hh = ts.strftime("%H")
     read_dir = f"/raw/ticker/dt={dt}/hh={hh}"
     write_dir = f"/raw/ticker_merged/dt={dt}"
-
+    print("[INFO] ts:", ts)
+    print("[INFO] read_dir:", read_dir)
+    print("[INFO] write_dir:", write_dir)
     item_list = []
     with ftplib.FTP() as ftp:
         ftp.connect("192.168.0.10", 21)
