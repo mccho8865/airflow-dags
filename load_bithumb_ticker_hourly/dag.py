@@ -24,7 +24,7 @@ conn = boto.connect_s3(
 coin_bucket = conn.get_bucket("coin-bucket")
 
 def load_to_s3_from_nas(ts):
-    ts = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')
+    ts = datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S+00:00')
     dt = ts.strftime("%Y-%m-%d")
     dt_nodash = ts.strftime("%Y%m%d")
     hh = ts.strftime("%H")
