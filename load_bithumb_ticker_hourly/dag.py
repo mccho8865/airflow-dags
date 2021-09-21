@@ -1,5 +1,5 @@
 import io, ftplib
-import pendulum
+import pendulum, pytz
 
 import boto
 import boto.s3.connection
@@ -26,7 +26,9 @@ conn = boto.connect_s3(
 coin_bucket = conn.get_bucket("coin-bucket")
 
 def load_to_s3_from_nas(ts):
+    kst = pytz.timezone("Asia/Seoul")
     ts = datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S+00:00')
+    ts = ts.astimezone(kst)
     dt = ts.strftime("%Y-%m-%d")
     dt_nodash = ts.strftime("%Y%m%d")
     hh = ts.strftime("%H")
