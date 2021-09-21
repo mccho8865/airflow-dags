@@ -24,14 +24,15 @@ conn = boto.connect_s3(
 coin_bucket = conn.get_bucket("coin-bucket")
 
 def load_to_s3_from_nas(ts):
-    ts = datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S+00:00')
+    ts = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')
     dt = ts.strftime("%Y-%m-%d")
+    dt_nodash = ts.strftime("%Y%m%d")
     hh = ts.strftime("%H")
-    read_dir = f"/raw/ticker/dt={dt}/hh={hh}"
-    write_dir = f"/raw/ticker_merged/dt={dt}"
+    read_dir = f"/raw/ticker/dt={dt_nodash}/hh={hh}"
+    
     print("[INFO] ts:", ts)
     print("[INFO] read_dir:", read_dir)
-    print("[INFO] write_dir:", write_dir)
+    
     item_list = []
     with ftplib.FTP() as ftp:
         ftp.connect("192.168.0.10", 21)
