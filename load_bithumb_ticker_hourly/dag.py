@@ -1,16 +1,18 @@
-from datetime import timedelta, datetime
-from airflow import DAG
-from airflow.operators.python import PythonOperator
-from airflow.operators.dummy import DummyOperator
-from airflow.contrib.operators.spark_submit_operator import SparkSubmitOperator
-
 import ftplib
 import io
 
 import boto
 import boto.s3.connection
 from boto.s3.key import Key
+from datetime import timedelta, datetime
 
+from airflow import DAG
+from airflow.utils import timezone
+from airflow.operators.python import PythonOperator
+from airflow.operators.dummy import DummyOperator
+from airflow.contrib.operators.spark_submit_operator import SparkSubmitOperator
+
+local_tz = pendulum.timezone("Asia/Seoul")
 access_key = 'Z780FG2AP64YD0Y2EWS8'
 secret_key = 'akGdNm3vY9xSCcyscq8StdTh6BMRGtt9FChidPgn'
 
@@ -77,8 +79,8 @@ dag = DAG(
     'load_ticker_from_nas_hourly',
     default_args=default_args,
     description='load_ticker_from_nas_hourly',
-    schedule_interval='5 * * * *',
-    start_date=datetime(2021, 9, 15),
+    schedule_interval='2 * * * *',
+    start_date=datetime(2021, 9, 15, tzinfo=local_tz),
     tags=['load', 'bithumb', 'ticker', 'nas_to_s3'],
 )
 
