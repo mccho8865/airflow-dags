@@ -123,8 +123,7 @@ load_batch = SparkSubmitOperator(task_id='load_to_batch_layer',
                                py_files = os.path.dirname(os.path.realpath(__file__)) + "parquet_loader_pyudf.py",
                                driver_memory = '4g',
                                executor_memory = '8g',
-                               num_executors = 4,
-                               args = ["--date", "{{ ds }}"],
-                               dag=dag)
+                               num_executors = 4,                               
+                               dag=dag, "--date", "{{ ds }}")
 
 start >> load_to_s3_from_nas >> load_batch >> end
