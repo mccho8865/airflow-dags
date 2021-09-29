@@ -118,12 +118,13 @@ spark_config = {"spark.driver.host": pod_ip,
 
 load_batch = SparkSubmitOperator(task_id='load_to_batch_layer', 
                                name = "load_ticker_to_batch_{{ ts }}",
+                               application_args = ["--date", "{{ ds }}"],
                                conf = spark_config,
                                conn_id = "spark_conn",
                                py_files = os.path.dirname(os.path.realpath(__file__)) + "parquet_loader_pyudf.py",
                                driver_memory = '4g',
                                executor_memory = '8g',
                                num_executors = 4,                               
-                               dag=dag, "--date", "{{ ds }}")
+                               dag=dag,)
 
 start >> load_to_s3_from_nas >> load_batch >> end
