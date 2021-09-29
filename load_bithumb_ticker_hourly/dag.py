@@ -1,7 +1,6 @@
 import io, ftplib
 import pendulum, pytz
-import socket
-
+import os, socket
 
 import boto
 import boto.s3.connection
