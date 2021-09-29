@@ -1,5 +1,7 @@
 import io, ftplib
 import pendulum, pytz
+import socket
+
 
 import boto
 import boto.s3.connection
@@ -97,4 +99,33 @@ load_to_s3_from_nas = PythonOperator(
     dag=dag
 )
 
-start >> load_to_s3_from_nas >> end
+pod_ip = socket.gethostbyname(socket.gethostname())
+spark_config = {"spark.driver.host": pod_ip,
+                "spark.kubernetes.container.image": "mccho8865/spark-py:3.0.2",
+                "spark.kubernetes.node.selector.spark": "",
+                "spark.hadoop.fs.s3a.fast.upload": "true",
+                "spark.hadoop.fs.s3a.endpoint": "rook-ceph-rgw-my-store.rook-ceph.svc.cluster.local",
+                "spark.hadoop.fs.s3a.connection.ssl.enabled": "false",
+                "spark.hadoop.fs.s3a.path.style.access": "true",
+                "spark.hadoop.fs.s3a.access.key": "Z780FG2AP64YD0Y2EWS8",
+                "spark.hadoop.fs.s3a.secret.key": "akGdNm3vY9xSCcyscq8StdTh6BMRGtt9FChidPgn",
+                "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
+                "spark.eventLog.enabled": "true",
+                "spark.eventLog.dir": "s3a://logs/spark-hs/",
+                "spark.sql.session.timeZone": "Asia/Seoul",
+                "spark.driver.extraJavaOptions": "-Duser.timezone=Asia/Seoul -Dio.netty.tryReflectionSetAccessible=true",
+                "spark.executor.extraJavaOptions": "-Duser.timezone=Asia/Seoul -Dio.netty.tryReflectionSetAccessible=true",
+                "spark.sql.sources.partitionOverwriteMode": "dynamic"}
+
+load_batch = SparkSubmitOperator(task_id='load_to_batch_layer', 
+                               name = "load_ticker_to_batch_{{ ts }}",
+                               conf = spark_config,
+                               conn_id = "spark_conn",
+                               py_files = os.path.dirname(os.path.realpath(__file__)) + "parquet_loader_pyudf.py",
+                               driver_memory = '4g',
+                               executor_memory = '8g',
+                               num_executors = 4,
+                               args = ["--date", "{{ ds }}"],
+                               dag=dag)
+
+start >> load_to_s3_from_nas >> load_batch >> end
