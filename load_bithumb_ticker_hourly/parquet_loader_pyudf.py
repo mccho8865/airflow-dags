@@ -17,7 +17,7 @@ import socket
 os.environ['PYSPARK_PYTHON'] = 'python3' # Needs to be explicitly provided as env. Otherwise workers run Python 2.7
 os.environ['PYSPARK_DRIVER_PYTHON'] = 'python3'  # Same
 
-spark = SparkSession.builder.appName("SparkByExample").getOrCreate()
+spark = SparkSession.builder.getOrCreate()
 
 raw_df = spark.read.option("mode", "DROPMALFORMED").text(f's3a://coin-bucket/warehouse/raw/ticker/dt={dt}')
 
