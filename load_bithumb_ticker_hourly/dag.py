@@ -100,7 +100,7 @@ load_to_s3_from_nas = PythonOperator(
 
 pod_ip = socket.gethostbyname(socket.gethostname())
 spark_config = {"spark.driver.host": pod_ip,
-                "spark.kubernetes.container.image": "mccho8865/spark-py:3.0.2",
+                "spark.kubernetes.container.image": "localhost:30580/spark-py:3.0.2",
                 "spark.kubernetes.node.selector.spark": "",
                 "spark.hadoop.fs.s3a.fast.upload": "true",
                 "spark.hadoop.fs.s3a.endpoint": "rook-ceph-rgw-my-store.rook-ceph.svc.cluster.local",
@@ -116,15 +116,15 @@ spark_config = {"spark.driver.host": pod_ip,
                 "spark.executor.extraJavaOptions": "'-Duser.timezone=Asia/Seoul -Dio.netty.tryReflectionSetAccessible=true'",
                 "spark.sql.sources.partitionOverwriteMode": "dynamic"}
 
-packages = ['org.apache.hadoop:hadoop-aws:3.2.0',
-            'org.apache.hadoop:hadoop-common:3.2.0',
-            'com.amazonaws:aws-java-sdk:1.12.105']
+# packages = ['org.apache.hadoop:hadoop-aws:3.2.0',
+#             'org.apache.hadoop:hadoop-common:3.2.0',
+#             'com.amazonaws:aws-java-sdk:1.12.105']
 
 load_batch = SparkSubmitOperator(task_id='load_to_batch_layer', 
                                name = "load_ticker_to_batch_{{ ts }}",
                                application_args = ["--date", "{{ ds }}"],
                                conf = spark_config,
-                               packages = ",".join(packages),
+#                                packages = ",".join(packages),
                                conn_id = "spark_conn",
                                application = os.path.dirname(os.path.realpath(__file__)) + "/parquet_loader_pyudf.py",
                                driver_memory = '4g',
