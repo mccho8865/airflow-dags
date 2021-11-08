@@ -82,7 +82,7 @@ dag = DAG(
     'load_ticker_from_nas_hourly',
     default_args=default_args,
     description='load_ticker_from_nas_hourly',
-    schedule_interval='2 * * * *',
+    schedule_interval='0 * * * *',
     start_date=datetime(2021, 9, 21, tzinfo=local_tz),
     tags=['load', 'bithumb', 'ticker', 'nas_to_s3'],
 )
