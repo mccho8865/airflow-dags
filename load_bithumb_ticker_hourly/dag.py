@@ -101,6 +101,7 @@ load_to_s3_from_nas = PythonOperator(
 # pod_ip = socket.gethostbyname(socket.gethostname())
 spark_config = {"spark.kubernetes.container.image": "localhost:30580/spark-py:3.0.2",
                 "spark.kubernetes.node.selector.spark": "",
+                "spark.kubernetes.authenticate.driver.serviceAccountName": "spark",
                 "spark.hadoop.fs.s3a.fast.upload": "true",
                 "spark.hadoop.fs.s3a.endpoint": "rook-ceph-rgw-my-store.rook-ceph.svc.cluster.local",
                 "spark.hadoop.fs.s3a.connection.ssl.enabled": "false",
