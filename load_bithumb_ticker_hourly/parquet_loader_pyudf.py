@@ -19,9 +19,11 @@ os.environ['PYSPARK_DRIVER_PYTHON'] = 'python3'  # Same
 
 spark = SparkSession.builder.getOrCreate()
 
-raw_df = spark.read.option("mode", "DROPMALFORMED").option("basePath", "s3a://coin-bucket/warehouse/raw/ticker").text(f's3a://coin-bucket/warehouse/raw/ticker/dt={dt}')
-
+raw_df = spark.read.option("mode", "DROPMALFORMED").option("basePath", "s3a://coin-bucket/warehouse/raw/ticker").text(f's3a://coin-bucket/warehouse/raw/ticker')
+print(dt)
 raw_df.show()
+
+raw_df = raw_df.filter(f"dt='{dt}'")
 raw_df.groupby('dt').count().show()
 
 
