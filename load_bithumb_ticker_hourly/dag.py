@@ -105,13 +105,13 @@ spark_config = {"spark.kubernetes.container.image": "localhost:30580/spark-py:3.
                 "spark.hadoop.fs.s3a.endpoint": "rook-ceph-rgw-my-store.rook-ceph.svc.cluster.local",
                 "spark.hadoop.fs.s3a.connection.ssl.enabled": "false",
                 "spark.hadoop.fs.s3a.path.style.access": "true",
-                "spark.hadoop.fs.s3a.access.key": "Z780FG2AP64YD0Y2EWS8",
-                "spark.hadoop.fs.s3a.secret.key": "akGdNm3vY9xSCcyscq8StdTh6BMRGtt9FChidPgn",
+                "spark.hadoop.fs.s3a.access.key": access_key,
+                "spark.hadoop.fs.s3a.secret.key": secret_key,
                 "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
                 "spark.eventLog.enabled": "true",
                 "spark.eventLog.dir": "s3a://logs/spark-hs/",
                 "spark.sql.session.timeZone": "Asia/Seoul",
-                "spark.driver.extraJavaOptions": "'-Duser.timezone=Asia/Seoul -Dio.netty.tryReflectionSetAccessible=true'",
+                "spark.driver.extraJavaOptions": "'-Duser.timezone=Asmcchia/Seoul -Dio.netty.tryReflectionSetAccessible=true'",
                 "spark.executor.extraJavaOptions": "'-Duser.timezone=Asia/Seoul -Dio.netty.tryReflectionSetAccessible=true'",
                 "spark.sql.sources.partitionOverwriteMode": "dynamic"}
 
@@ -128,7 +128,7 @@ load_batch = SparkSubmitOperator(task_id='load_to_batch_layer',
                                application = os.path.dirname(os.path.realpath(__file__)) + "/parquet_loader_pyudf.py",
                                driver_memory = '4g',
                                executor_memory = '8g',
-                               num_executors = 4,                               
+                               num_executors = 2,                               
                                dag=dag,)
 
 start >> load_to_s3_from_nas >> load_batch >> end
