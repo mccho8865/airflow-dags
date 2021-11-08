@@ -98,35 +98,34 @@ load_to_s3_from_nas = PythonOperator(
     dag=dag
 )
 
-# pod_ip = socket.gethostbyname(socket.gethostname())
-# spark_config = {"spark.driver.host": pod_ip,
-#                 "spark.kubernetes.container.image": "mccho8865/spark-py:3.0.2",
-#                 "spark.kubernetes.node.selector.spark": "",
-#                 "spark.hadoop.fs.s3a.fast.upload": "true",
-#                 "spark.hadoop.fs.s3a.endpoint": "rook-ceph-rgw-my-store.rook-ceph.svc.cluster.local",
-#                 "spark.hadoop.fs.s3a.connection.ssl.enabled": "false",
-#                 "spark.hadoop.fs.s3a.path.style.access": "true",
-#                 "spark.hadoop.fs.s3a.access.key": "Z780FG2AP64YD0Y2EWS8",
-#                 "spark.hadoop.fs.s3a.secret.key": "akGdNm3vY9xSCcyscq8StdTh6BMRGtt9FChidPgn",
-#                 "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
-#                 "spark.eventLog.enabled": "true",
-#                 "spark.eventLog.dir": "s3a://logs/spark-hs/",
-#                 "spark.sql.session.timeZone": "Asia/Seoul",
-#                 "spark.driver.extraJavaOptions": "'-Duser.timezone=Asia/Seoul -Dio.netty.tryReflectionSetAccessible=true'",
-#                 "spark.executor.extraJavaOptions": "'-Duser.timezone=Asia/Seoul -Dio.netty.tryReflectionSetAccessible=true'",
-#                 "spark.sql.sources.partitionOverwriteMode": "dynamic"}
+pod_ip = socket.gethostbyname(socket.gethostname())
+spark_config = {"spark.driver.host": pod_ip,
+                "spark.kubernetes.container.image": "mccho8865/spark-py:3.0.2",
+                "spark.kubernetes.node.selector.spark": "",
+                "spark.hadoop.fs.s3a.fast.upload": "true",
+                "spark.hadoop.fs.s3a.endpoint": "rook-ceph-rgw-my-store.rook-ceph.svc.cluster.local",
+                "spark.hadoop.fs.s3a.connection.ssl.enabled": "false",
+                "spark.hadoop.fs.s3a.path.style.access": "true",
+                "spark.hadoop.fs.s3a.access.key": "Z780FG2AP64YD0Y2EWS8",
+                "spark.hadoop.fs.s3a.secret.key": "akGdNm3vY9xSCcyscq8StdTh6BMRGtt9FChidPgn",
+                "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
+                "spark.eventLog.enabled": "true",
+                "spark.eventLog.dir": "s3a://logs/spark-hs/",
+                "spark.sql.session.timeZone": "Asia/Seoul",
+                "spark.driver.extraJavaOptions": "'-Duser.timezone=Asia/Seoul -Dio.netty.tryReflectionSetAccessible=true'",
+                "spark.executor.extraJavaOptions": "'-Duser.timezone=Asia/Seoul -Dio.netty.tryReflectionSetAccessible=true'",
+                "spark.sql.sources.partitionOverwriteMode": "dynamic"}
 
-# load_batch = SparkSubmitOperator(task_id='load_to_batch_layer', 
-#                                name = "load_ticker_to_batch_{{ ts }}",
-#                                application_args = ["--date", "{{ ds }}"],
-#                                conf = spark_config,
-#                                packages = "org.apache.hadoop:hadoop-aws:3.2.0,org.apache.hadoop:hadoop-common:3.2.0",
-#                                conn_id = "spark_conn",
-#                                application = os.path.dirname(os.path.realpath(__file__)) + "parquet_loader_pyudf.py",
-#                                driver_memory = '4g',
-#                                executor_memory = '8g',
-#                                num_executors = 4,                               
-#                                dag=dag,)
+load_batch = SparkSubmitOperator(task_id='load_to_batch_layer', 
+                               name = "load_ticker_to_batch_{{ ts }}",
+                               application_args = ["--date", "{{ ds }}"],
+                               conf = spark_config,
+                               packages = "org.apache.hadoop:hadoop-aws:3.2.0,org.apache.hadoop:hadoop-common:3.2.0",
+                               conn_id = "spark_conn",
+                               application = os.path.dirname(os.path.realpath(__file__)) + "parquet_loader_pyudf.py",
+                               driver_memory = '4g',
+                               executor_memory = '8g',
+                               num_executors = 4,                               
+                               dag=dag,)
 
-# start >> load_to_s3_from_nas >> load_batch >> end
-start >> load_to_s3_from_nas  >> end
+start >> load_to_s3_from_nas >> load_batch >> end
