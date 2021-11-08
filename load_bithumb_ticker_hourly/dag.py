@@ -121,8 +121,8 @@ spark_config = {"spark.kubernetes.container.image": "localhost:30580/spark-py:3.
 #             'com.amazonaws:aws-java-sdk:1.12.105']
 
 load_batch = SparkSubmitOperator(task_id='load_to_batch_layer', 
-                               name = "load_ticker_to_batch_{{ ts }}",
-                               application_args = ["--date", "{{ ds }}"],
+                               name = "load_ticker_to_batch_{{ macros.ts_macros.ts_add(ts, 9) }}",
+                               application_args = ["--date", "{{ macros.ts_macros.ts_format(macros.ts_macros.ts_add(ts, 9), '%Y-%m-%d') }}"],
                                conf = spark_config,
 #                                packages = ",".join(packages),
                                conn_id = "spark_conn",
