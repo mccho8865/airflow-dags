@@ -73,7 +73,7 @@ parsed_df = parsed_df.select('parsed_arr.*')
 
 parsed_df.show(10)
 
-parsed_df = parsed_df.select(col('coin').cast(StringType()),
+out_df = parsed_df.select(col('coin').cast(StringType()),
                          from_unixtime(col('timestamp')/1000).alias('timestamp'),
                          col('opening_price').cast(DoubleType()),
                          col('closing_price').cast(DoubleType()),
@@ -87,10 +87,12 @@ parsed_df = parsed_df.select(col('coin').cast(StringType()),
                          col('fluctate_24H').cast(DoubleType()),
                          col('fluctate_rate_24H').cast(DoubleType()),
                          from_unixtime(col('timestamp')/1000, 'yyyy-MM-dd').alias('dt'))
+try:
+    loaded_df = spark.read.option("basePath", "s3a://coin-bucket/warehouse/data/ticker").parquet(f's3a://coin-bucket/warehouse/data/ticker/dt={dt}')
 
-loaded_df = spark.read.option("basePath", "s3a://coin-bucket/warehouse/data/ticker").parquet(f's3a://coin-bucket/warehouse/data/ticker/dt={dt}')
-
-out_df = loaded_df.union(parsed_df)
+    out_df = loaded_df.union(out_df)
+except:
+    pass
 
 out_df = out_df.distinct()
 out_df.repartition('dt').write.partitionBy(['dt']).mode('overwrite').parquet('s3a://coin-bucket/warehouse/data/ticker')
