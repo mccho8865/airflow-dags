@@ -13,6 +13,7 @@ from pyspark.sql import SparkSession
 
 import os
 import socket
+import datetime
 
 os.environ['PYSPARK_PYTHON'] = 'python3' # Needs to be explicitly provided as env. Otherwise workers run Python 2.7
 os.environ['PYSPARK_DRIVER_PYTHON'] = 'python3'  # Same
@@ -88,6 +89,7 @@ out_df = parsed_df.select(col('coin').cast(StringType()),
                          col('fluctate_rate_24H').cast(DoubleType()),
                          from_unixtime(col('timestamp')/1000, 'yyyy-MM-dd').alias('dt'))
 try:
+    yesterday = datetime.datetime.strptime(dt, '%Y-%m-%d') - datetime.timedelta(days=1)
     loaded_df = spark.read.option("basePath", "s3a://coin-bucket/warehouse/data/ticker").parquet(f's3a://coin-bucket/warehouse/data/ticker/dt={dt}')
 
     out_df = loaded_df.union(out_df)
