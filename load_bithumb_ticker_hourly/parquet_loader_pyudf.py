@@ -88,9 +88,13 @@ out_df = parsed_df.select(col('coin').cast(StringType()),
                          col('fluctate_24H').cast(DoubleType()),
                          col('fluctate_rate_24H').cast(DoubleType()),
                          from_unixtime(col('timestamp')/1000, 'yyyy-MM-dd').alias('dt'))
+
+yesterday = (datetime.datetime.strptime(dt, '%Y-%m-%d') - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+print(yesterday)
+
 try:
-    yesterday = datetime.datetime.strptime(dt, '%Y-%m-%d') - datetime.timedelta(days=1)
-    loaded_df = spark.read.option("basePath", "s3a://coin-bucket/warehouse/data/ticker").parquet(f's3a://coin-bucket/warehouse/data/ticker/dt={dt}')
+
+    loaded_df = spark.read.option("basePath", "s3a://coin-bucket/warehouse/data/ticker").parquet(f's3a://coin-bucket/warehouse/data/ticker/dt={yesterday}')
 
     out_df = loaded_df.union(out_df)
 except:
