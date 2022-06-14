@@ -34,9 +34,9 @@ default_args = {
 }
 
 dag = DAG(
-    'load_ticker_from_nas_hourly',
+    'dw_bithumb_ticker',
     default_args=default_args,
-    description='load_ticker_from_nas_hourly',
+    description='dw_bithumb_ticker',
     schedule_interval='@daily',
     start_date=datetime(2022, 6, 13, tzinfo=local_tz),
     tags=['dw', 'daily'],
@@ -48,9 +48,9 @@ end = DummyOperator(task_id="end")
 spark_config = Variable.get("spark_option", deserialize_json=True)
 
 spark_op = SparkSubmitOperator(task_id='dw_bithumb_ticker', 
-                               name = "airflow_dw_bithumb_ticker_{{execution_date}}",
-#                                application_args = ["--date", "{{ (execution_date  + macros.timedelta(hours=9)).strftime('%Y-%m-%d') }}"],
-                               application_args = ["--date", "{{execution_date}}"],
+                               name = "airflow_dw_bithumb_ticker_{{ (execution_date  + macros.timedelta(hours=9)).strftime('%Y-%m-%d') }}",
+                               application_args = ["--date", "{{ (execution_date  + macros.timedelta(hours=9)).strftime('%Y-%m-%d') }}"],
+#                                application_args = ["--date", "{{execution_date}}"],
                                conf = spark_config,
                                conn_id = "spark_conn",
                                application = 'https://raw.githubusercontent.com/mccho8865/airflow-dags/main/dw_bithumb_ticker/daily_load_bithumb_ticker.py',
