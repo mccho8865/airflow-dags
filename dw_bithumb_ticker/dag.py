@@ -37,7 +37,7 @@ dag = DAG(
     'dw_bithumb_ticker',
     default_args=default_args,
     description='dw_bithumb_ticker',
-    schedule_interval='@daily',
+    schedule_interval='5 0 * * *',
     start_date=datetime(2022, 6, 13, tzinfo=local_tz),
     tags=['dw', 'daily'],
 )
