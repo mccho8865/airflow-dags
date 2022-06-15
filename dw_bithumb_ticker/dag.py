@@ -56,7 +56,7 @@ spark_op = SparkSubmitOperator(task_id='dw_bithumb_ticker',
                                application = 'https://raw.githubusercontent.com/mccho8865/airflow-dags/main/dw_bithumb_ticker/daily_load_bithumb_ticker.py',
                                driver_memory = '4g',
                                executor_memory = '8g',
-                               num_executors = 3,                               
+                               num_executors = 5,                               
                                dag=dag,)
 
 start >> spark_op >> end
